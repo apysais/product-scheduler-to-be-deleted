@@ -1,17 +1,21 @@
-<p>Select Date
-<input type="text" class="ps-select-date-range" name="ps-select-date-range" id="ps-select-date-range" style="width:100%;" autocomplete="off">
-</p>
-<?php if ( $isWithinTimeRange ) : ?>
-    <p>Select Time<br>
-    <select name="ps-select-time-range" class="ps-select-time-range">
-        <?php foreach($available_select_time as $key => $val ) : ?>
-            <option value="<?php echo $key;?>"><?php echo $val;?></option>
-        <?php endforeach; ?>
-    </select>
+<div class="ps-select-date-time-schedule">
+    <p>Select Date
+    <input readonly="readonly" type="text" class="ps-select-date-range" name="ps-select-date-range" id="ps-select-date-range" style="width:100%;" autocomplete="off">
     </p>
-<?php endif; ?>
+    <?php //if ( $isWithinTimeRange ) : ?>
+        <p>Select Time <br>
+            <select name="ps-select-time-range" class="ps-select-time-range">
+                <?php foreach($available_select_time as $key => $val ) : ?>
+                    <option value="<?php echo $key;?>"><?php echo $val;?></option>
+                <?php endforeach; ?>
+            </select>
+            <span class="ps-select-time-ajax"></span>
+        </p>
+    <?php //endif; ?>
+<div class="ps-select-date-time-schedule">
 <script>
 jQuery( function() {
+    var postId = <?php echo $post_id; ?>;
     var dateToday = new Date();
     var selectAvailabeDay = <?php echo json_encode(array_keys($available_select_date_day)); ?>;
     //1 monday
@@ -36,8 +40,7 @@ jQuery( function() {
             var setMinDate = new Date(dbStartMonth);
         }
     }
-    console.log(setMinDate);
-    console.log(setMaxDate);
+
     jQuery( "#ps-select-date-range" ).datepicker({
         dateFormat:'yy/mm/dd',
         changeMonth: false,
@@ -55,7 +58,49 @@ jQuery( function() {
                 return [true];
             }
             return [false];
-        }
+        },
+        onSelect: function(date) {
+            var dateToday = jQuery.datepicker.formatDate('yy/mm/dd', new Date());
+            selectTimeRangeAjax(date);
+        },
     });
+
+    function selectTimeRangeAjax(date)
+    {
+        var data = {
+    		'action': 'ps_select_time_range',
+            'date_selected' : date,
+            'post_id' : postId
+    	};
+        var ps_ajax_url = '<?php echo admin_url( 'admin-ajax.php' ); ?>';
+
+        var selectTime = jQuery('.ps-select-time-range');
+        var spanAjaxMsg = jQuery('.ps-select-time-ajax');
+
+        selectTime.prop("disabled", true);
+        spanAjaxMsg.html();
+        spanAjaxMsg.html('getting time range please wait...');
+
+        jQuery.ajax({
+            method: "POST",
+            url: ps_ajax_url,
+            data: data
+        })
+        .done(function( response ) {
+            selectTime.empty();
+
+            jQuery.each(response, function(key, val){
+                selectTime.append('<option value="' + key + '">' + val + '</option>');
+            });
+            selectTime.prop("disabled", false);
+            spanAjaxMsg.html('');
+        })
+        .fail(function(response){
+            selectTime.prop("disabled", false);
+            spanAjaxMsg.html();
+            spanAjaxMsg.html('something went wrong');
+        });
+    }
+
 } );
 </script>

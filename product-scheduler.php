@@ -142,6 +142,9 @@ function run_plugin_scheduler() {
 		PS_WOO_ProductDataTab::get_instance();
 
 		PS_WOO_SelectSchedule::get_instance();
+		PS_SelectTimeRange::get_instance()->initAjaxGetTimeRange();
+
+		PS_Calendar_Ajax::get_instance();
 	}
 
 	//PS_CarbonDate::get_instance()->test();
@@ -149,13 +152,13 @@ function run_plugin_scheduler() {
 //run_plugin_scheduler();
 add_action('plugins_loaded', 'run_plugin_scheduler');
 
-function mailtrap($phpmailer) {
-  $phpmailer->isSMTP();
-  $phpmailer->Host = 'smtp.mailtrap.io';
-  $phpmailer->SMTPAuth = true;
-  $phpmailer->Port = 2525;
-  $phpmailer->Username = '03bb6f02053c14';
-  $phpmailer->Password = 'b34291b889be14';
-}
-
-add_action('phpmailer_init', 'mailtrap');
+// function mailtrap($phpmailer) {
+//   $phpmailer->isSMTP();
+//   $phpmailer->Host = 'smtp.mailtrap.io';
+//   $phpmailer->SMTPAuth = true;
+//   $phpmailer->Port = 2525;
+//   $phpmailer->Username = '03bb6f02053c14';
+//   $phpmailer->Password = 'b34291b889be14';
+// }
+//
+// add_action('phpmailer_init', 'mailtrap');

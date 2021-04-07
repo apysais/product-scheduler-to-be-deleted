@@ -1,30 +1,29 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+exit; // Exit if accessed directly
 }
 /**
- * WP menu
- * */
+* WP menu
+* */
 class PS_WPMenu {
-  /**
-	 * instance of this class
-	 *
-	 * @since 0.0.1
-	 * @access protected
-	 * @var	null
-	 * */
+	/**
+	* instance of this class
+	*
+	* @since 0.0.1
+	* @access protected
+	* @var	null
+	* */
 	protected static $instance = null;
 
 	/**
-	 * Return an instance of this class.
-	 *
-	 * @since     0.0.1
-	 *
-	 * @return    object    A single instance of this class.
-	 */
+	* Return an instance of this class.
+	*
+	* @since     0.0.1
+	*
+	* @return    object    A single instance of this class.
+	*/
 	public static function get_instance()
-  {
-
+	{
 		/*
 		 * - Uncomment following lines if the admin class should only be available for super admins
 		 */
@@ -34,7 +33,7 @@ class PS_WPMenu {
 
 		// If the single instance hasn't been set, set it now.
 		if (null == self::$instance)
-    {
+		{
 			self::$instance = new self;
 		}
 
@@ -42,32 +41,20 @@ class PS_WPMenu {
 	}
 
 	public function __construct()
-  {
-    add_action( 'admin_menu', [$this, 'init'] );
-  }
+	{
+		add_action( 'admin_menu', [$this, 'init'] );
+	}
 
-  public function init()
-  {
-    add_menu_page(
-        __('Product Scheduler'),
-        'Product Scheduler',
-        'delete_posts',
-        'product-scheduler',
-        //[WA_Dashboard_Controller::get_instance() , 'controller'],
-        '',
-        'dashicons-welcome-widgets-menus',
-        6
-    );
-
-    // add_submenu_page(
-    //     'app-dashboard',
-    //     __( 'Warehouse Dashboard'),
-    //     __( 'Warehouse'),
-    //     'delete_posts',
-    //     'warehouse',
-    //     [WA_Warehouse_Controller::get_instance() , 'controller']
-    // );
-
-  }
-
+	public function init()
+	{
+		add_menu_page(
+			__('Product Scheduler'),
+			'Product Scheduler',
+			'delete_posts',
+			'product-scheduler',
+			[PS_Calendar_Controller::get_instance() , 'controller'],
+			'dashicons-welcome-widgets-menus',
+			6
+		);
+	}
 }//

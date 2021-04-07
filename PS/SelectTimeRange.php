@@ -50,6 +50,42 @@ class PS_SelectTimeRange {
 
 	}
 
+	public function initAjaxGetTimeRange()
+	{
+		add_action( 'wp_ajax_ps_select_time_range', [$this, 'ajaxSelectTimeRange'] );
+		add_action( 'wp_ajax_nopriv_ps_select_time_range', [$this, 'ajaxSelectTimeRange'] );
+	}
+
+	public function ajaxSelectTimeRange()
+	{
+
+		$currentTime = Carbon::now(wp_timezone_string());
+
+		$post_id = $_POST['post_id'];
+
+		$available_time_start = $this->getSelectStartTime($post_id)->format('H:i');
+		$available_time_end = $this->getSelectEndTime($post_id)->format('H:i');
+
+		$interval_time = $this->getIntervalTime($post_id);
+		//echo $_POST['date_selected'].'>'.$currentTime->format('Y/m/d');
+		if ( $_POST['date_selected'] > $currentTime->format('Y/m/d') ) {
+			$available_select_time = $this->getIntervalTimeForHuman([
+                'post_id' => $post_id,
+                'available_time_start' => $available_time_start,
+                'available_time_end' => $available_time_end,
+            ]);
+		} else {
+			$available_select_time = $this->getIntervalTimeForHuman([
+                'post_id' => $post_id,
+                'available_time_start' => $available_time_start,
+                'available_time_end' => $available_time_end,
+				'start_to_current_now_time' => true
+            ]);
+		}
+		echo wp_send_json($available_select_time);
+		wp_die();
+	}
+
     public function isWithinTimeRange(array $args = null)
     {
         $post_id = $args['post_id'];
@@ -101,8 +137,10 @@ class PS_SelectTimeRange {
 		$option = new PS_Options;
 
 		$available_time_start = $args['available_time_start'];
-		if( $startToNowTime && $now->format('h:i a') <= Carbon::createFromTimeString($args['available_time_start'])->format('h:i a') ) {
-		 	$available_time_start = $now->format('h:i a');
+		$isWithinTimeRange = $this->isWithinTimeRange(['post_id'=>$post_id]);
+		
+		if( $startToNowTime && $isWithinTimeRange && $now->timestamp >= Carbon::createFromTimeString($args['available_time_start'])->timestamp ) {
+			$available_time_start = $now->format('h:i a');
 		}
 
 		$available_time_end = $args['available_time_end'];
@@ -115,7 +153,6 @@ class PS_SelectTimeRange {
 			}
 		}
 		$intervalParts = explode(':', $time_interval);
-
 
 		$makeHour = '0 hour';
 		$makeMinute = '0 minutes';

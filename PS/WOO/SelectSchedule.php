@@ -47,12 +47,12 @@ class PS_WOO_SelectSchedule {
     public function __construct()
     {
         add_action('woocommerce_before_add_to_cart_button', [$this, 'select'], 100);
-        add_filter( 'woocommerce_loop_add_to_cart_link', [$this, 'psScheduleRedirectToProduct'], 100, 2 );
-        add_filter( 'woocommerce_add_to_cart_validation', [$this, 'psValidateCustomField'], 100, 3 );
-        add_action( 'woocommerce_checkout_create_order_line_item', [$this, 'psAddCustomDataToOrder'], 100, 4 );
-        add_filter( 'woocommerce_add_cart_item_data', [$this, 'psAddCustomFieldItemData'], 100, 4 );
-        add_filter( 'woocommerce_cart_item_name', [$this, 'psCartItemName'], 100, 3 );
-        add_filter( 'woocommerce_order_item_display_meta_key', [$this, 'psChangeOrderItemMetaTitle'], 200, 3 );
+        add_filter('woocommerce_loop_add_to_cart_link', [$this, 'psScheduleRedirectToProduct'], 100, 2 );
+        add_filter('woocommerce_add_to_cart_validation', [$this, 'psValidateCustomField'], 100, 3 );
+        add_action('woocommerce_checkout_create_order_line_item', [$this, 'psAddCustomDataToOrder'], 100, 4 );
+        add_filter('woocommerce_add_cart_item_data', [$this, 'psAddCustomFieldItemData'], 100, 4 );
+        add_filter('woocommerce_cart_item_name', [$this, 'psCartItemName'], 100, 3 );
+        add_filter('woocommerce_order_item_display_meta_key', [$this, 'psChangeOrderItemMetaTitle'], 200, 3 );
         add_action('wp_enqueue_scripts', [$this, 'load_scripts']);
     }
 
@@ -194,16 +194,16 @@ class PS_WOO_SelectSchedule {
                 'available_time_end' => $available['available_time_end'],
                 'start_to_current_now_time' => true
             ]);
-        }
 
-        $data['available'] = $available;
-        $data['isScheduleEnable'] = $isScheduleEnable;
-        $data['isWithinTimeRange'] = $isWithinTimeRange;
-        $data['isWithinDateRange'] = $isWithinDateRange;
-        $data['available_select_time'] = $available_select_time;
-        $data['available_select_date_day'] = PS_SelectDay::get_instance()->convertDayToJqueryDatePicker($available['available_day']);
-        
-        PS_View::get_instance()->public_partials( 'woo/before-cart.php', $data );
+            $data['available'] = $available;
+            $data['isScheduleEnable'] = $isScheduleEnable;
+            $data['isWithinTimeRange'] = $isWithinTimeRange;
+            $data['isWithinDateRange'] = $isWithinDateRange;
+            $data['available_select_time'] = $available_select_time;
+            $data['available_select_date_day'] = PS_SelectDay::get_instance()->convertDayToJqueryDatePicker($available['available_day']);
+            $data['post_id'] = $post_id;
+            PS_View::get_instance()->public_partials( 'woo/before-cart.php', $data );
+        }
     }
 
 }//
