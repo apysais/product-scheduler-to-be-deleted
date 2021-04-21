@@ -68,17 +68,18 @@ class PS_Calendar_Ajax {
 				foreach( $orders as $order ) {
 					foreach ( $order->get_items() as $item_id => $item ) {
 						$date = $item->get_meta( 'ps_date_range_select', true );
-						$time = $item->get_meta( 'ps_time_select', true );
+						$time_prepare = $item->get_meta( 'ps_time_select', true );
+						$time_pickup = $item->get_meta( 'ps_time_pickup_select', true );
 						if ( $date != '' ) {
 							$allDay = false;
-							if( $item->get_meta( 'ps_time_select', true ) == '' ) {
-								$time = '';
+							if( $item->get_meta( 'ps_time_pickup_select', true ) == '' ) {
+								$time_pickup = '';
 								$allDay = true;
 							}
 							$output_arrays[] = [
 								'title' => 'Order # ' . $order->get_id(),
 								'descripton' => $item->get_name(),
-								'start' => date("Y-m-d\TH:i", strtotime($date.' '.$time)),
+								'start' => date("Y-m-d\TH:i", strtotime($date.' '.$time_pickup)),
 								'url' => '',
 								'classNames' => [],
 								// 'extendedProps' => ['aaa' => 'aa', 'bbb' => 'bb'],

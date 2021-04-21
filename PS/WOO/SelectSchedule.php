@@ -73,7 +73,8 @@ class PS_WOO_SelectSchedule {
 
         // By using $meta-key we are sure we have the correct one.
         if ( 'ps_date_range_select' === $meta->key ) { $key = 'Date Selected'; }
-        if ( 'ps_time_select' === $meta->key ) { $key = 'Time Selected'; }
+        if ( 'ps_time_select' === $meta->key ) { $key = 'Time Prepare Selected'; }
+        if ( 'ps_time_pickup_select' === $meta->key ) { $key = 'Time Pickup Selected'; }
 
         return $key;
     }
@@ -87,8 +88,14 @@ class PS_WOO_SelectSchedule {
         }
         if( isset( $cart_item['ps_time_select'] ) ) {
             $name .= sprintf(
-            '<p>Time Selected: %s</p>',
+            '<p>Time Prepare Selected: %s</p>',
             esc_html( $cart_item['ps_time_select'] )
+            );
+        }
+        if( isset( $cart_item['ps_time_pickup_select'] ) ) {
+            $name .= sprintf(
+            '<p>Time Pickup Selected: %s</p>',
+            esc_html( $cart_item['ps_time_pickup_select'] )
             );
         }
         return $name;
@@ -104,8 +111,12 @@ class PS_WOO_SelectSchedule {
             $cart_item_data['ps_date_range_select'] = $_POST['ps-select-date-range'];
         }
         if( $isScheduleEnable && ! empty( $_POST['ps-select-time-range'] ) ) {
-            // Add the item data
+            // Add the item data, prepare
             $cart_item_data['ps_time_select'] = $_POST['ps-select-time-range'];
+        }
+        if( $isScheduleEnable && ! empty( $_POST['ps-select-time-range-pickup'] ) ) {
+            // Add the item data, pickup
+            $cart_item_data['ps_time_pickup_select'] = $_POST['ps-select-time-range-pickup'];
         }
         return $cart_item_data;
     }
@@ -116,8 +127,13 @@ class PS_WOO_SelectSchedule {
             if( isset( $values['ps_date_range_select'] ) ) {
                 $item->add_meta_data( 'ps_date_range_select', $values['ps_date_range_select'], true );
             }
+            //prepare
             if( isset( $values['ps_time_select'] ) ) {
                 $item->add_meta_data( 'ps_time_select', $values['ps_time_select'], true );
+            }
+            //pickup
+            if( isset( $values['ps_time_pickup_select'] ) ) {
+                $item->add_meta_data( 'ps_time_pickup_select', $values['ps_time_pickup_select'], true );
             }
         }
     }
@@ -172,36 +188,39 @@ class PS_WOO_SelectSchedule {
 
         if ( $isScheduleEnable ) {
             $available = PS_Available::get_instance()->status(['post_id'=>$post_id]);
-    		//ps_dd($available);
 
             $isWithinDateRange = PS_SelectDateRange::get_instance()->isWithinDateRange([
     			'post_id'=>$post_id
     		]);
-            if ( $isWithinDateRange ) {
-                // ps_dd($available['date_range_select']);
-            }
 
             $isAvailableToday = PS_SelectDay::get_instance()->isAvailableToday(['post_id'=>$post_id]);
             $data['available_select_day'] = PS_SelectDay::get_instance()->convertDayToNumericKey($available['available_select_day']);
 
             $isWithinTimeRange = PS_SelectTimeRange::get_instance()->isWithinTimeRange(['post_id'=>$post_id]);
-    		if ( $isWithinTimeRange ) {
-                // ps_dd($available['available_select_time']);
-            }
-            $available_select_time = PS_SelectTimeRange::get_instance()->getIntervalTimeForHuman([
+
+            $available_select_time = PS_SelectTimeRange::get_instance()->getIntervalPrepareTimeForHuman([
                 'post_id' => $post_id,
                 'available_time_start' => $available['available_time_start'],
                 'available_time_end' => $available['available_time_end'],
                 'start_to_current_now_time' => true
             ]);
 
+            $available_time_pickup = PS_SelectTimeRange::get_instance()->getIntervalTimeForHuman([
+                'post_id' => $post_id,
+                'available_time_start' => $available['available_time_start'],
+                'available_time_end' => $available['available_time_end'],
+                'start_to_current_now_time' => true
+            ]);
+            //ps_dd($available_time_prepare);
             $data['available'] = $available;
             $data['isScheduleEnable'] = $isScheduleEnable;
             $data['isWithinTimeRange'] = $isWithinTimeRange;
             $data['isWithinDateRange'] = $isWithinDateRange;
             $data['available_select_time'] = $available_select_time;
+            $data['available_select_time_pickup'] = $available_time_pickup;
             $data['available_select_date_day'] = PS_SelectDay::get_instance()->convertDayToJqueryDatePicker($available['available_day']);
             $data['post_id'] = $post_id;
+            //ps_dd($data);
             PS_View::get_instance()->public_partials( 'woo/before-cart.php', $data );
         }
     }

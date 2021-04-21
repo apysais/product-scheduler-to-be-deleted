@@ -123,6 +123,13 @@ class PS_WOO_ProductDataTab {
 			'value' => $ps_interval_time
 		]);
 
+		$ps_interval_prepare_time = $_POST['ps_interval_time_preperations'];
+		PS_SchedulePostMeta::get_instance()->ps_interval_time_preperations([
+			'post_id' => $id,
+			'action' => 'u',
+			'value' => $ps_interval_prepare_time
+		]);
+
 	}
 
 	public function productTab($tabs)
@@ -226,13 +233,24 @@ class PS_WOO_ProductDataTab {
 			echo '</div>';
 
 			echo '<div class="options_group">';
-				echo '<p>Available Time interval </p>';
+				echo '<p>Time Preparations interval </p>';
+				echo '<p>input, manually type hour or minute format. </p>';
+				echo '<p>example: 1:00 for hour, or 0:30 for minute. </p>';
+				woocommerce_wp_text_input( array(
+					'id'          => 'ps_interval_time_preperations',
+					'value'       => get_post_meta( get_the_ID(), 'ps_interval_time_preperations', true ),
+					'label'       => 'Interval Preperation time.',
+				) );
+			echo '</div>';
+
+			echo '<div class="options_group">';
+				echo '<p>Time pickup interval </p>';
 				echo '<p>input, manually type hour or minute format. </p>';
 				echo '<p>example: 1:00 for hour, or 0:30 for minute. </p>';
 				woocommerce_wp_text_input( array(
 					'id'          => 'ps_interval_time',
 					'value'       => get_post_meta( get_the_ID(), 'ps_interval_time', true ),
-					'label'       => 'Interval time.',
+					'label'       => 'Interval Pickup time.',
 				) );
 			echo '</div>';
 
@@ -254,7 +272,7 @@ class PS_WOO_ProductDataTab {
 		return PS_SelectDay::get_instance()->getDay();
 	}
 
-	protected function getHoursRange( $start = 0, $end = 86400, $step = 3600, $format = 'g:i a' ) {
+	protected function getHoursRange( $start = 0, $end = 86400, $step = 3600, $format = 'H:i' ) {
 		return PS_SelectTimeRange::get_instance()->getHoursRange($start, $end, $step, $format);
 	}
 }//

@@ -262,6 +262,30 @@ class PS_SchedulePostMeta {
 		}
 	}
 
+	public function ps_interval_time_preperations( $args = [] ) {
+		$prefix = 'ps_interval_time_preperations';
+		if ( isset ( $args['post_id'] ) ) {
+			$defaults = array(
+				'single'  => false,
+				'action'  => 'r',
+				'value'   => '',
+				'prefix'  => $prefix
+			);
+			$args = wp_parse_args( $args, $defaults );
+			switch( $args['action'] ) {
+				case 'd':
+					delete_post_meta( $args['post_id'], $args['prefix'], $args['value'] );
+				break;
+				case 'u':
+					update_post_meta( $args['post_id'], $args['prefix'], $args['value'] );
+				break;
+				case 'r':
+					return get_post_meta( $args['post_id'], $args['prefix'], $args['single'] );
+				break;
+			}
+		}
+	}
+
 	public function ps_enable_schedule( $args = [] ) {
 		$prefix = 'ps_enable_schedule';
 		if ( isset ( $args['post_id'] ) ) {

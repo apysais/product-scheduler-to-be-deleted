@@ -49,13 +49,18 @@ class PS_Options {
 	{
 		Container::make( 'theme_options', __( 'Store Options' ) )
 		->set_page_parent( 'product-scheduler' )
-		->add_fields( array(
-		Field::make( 'time', 'crb_ps_pickup_start_time', __( 'Store start pickup' ) ),
-		Field::make( 'time', 'crb_ps_pickup_close_time', __( 'Store least pickup' ) ),
-		Field::make( 'text', 'crb_ps_global_time_interval', __( 'Global Time Interval' ) )
-		  ->set_attribute( 'placeholder', 'Set Interval time preparetions ' )
-		  ->set_default_value('0:30'),
-		) );
+		->add_fields(
+			array(
+				Field::make( 'time', 'crb_ps_pickup_start_time', __( 'Store start pickup' ) ),
+				Field::make( 'time', 'crb_ps_pickup_close_time', __( 'Store least pickup' ) ),
+				Field::make( 'text', 'crb_ps_global_time_interval', __( 'Global Time Interval Pickup' ) )
+		  		->set_attribute( 'placeholder', 'Set Interval time pickup ' )
+		  		->set_default_value('0:30'),
+				Field::make( 'text', 'crb_ps_global_time_prepare_time', __( 'Global Time Interval Prepare' ) )
+		  		->set_attribute( 'placeholder', 'Set Global time preparetions ' )
+		  		->set_default_value('1:00'),
+			)
+		);
 	}
 
 	public function getStartPickupTime()
@@ -71,6 +76,11 @@ class PS_Options {
 	public function getGlobalTimeInterval()
 	{
 		return carbon_get_theme_option('crb_ps_global_time_interval');
+	}
+
+	public function getGlobalPrepareTimeInterval()
+	{
+		return carbon_get_theme_option('crb_ps_global_time_prepare_time');
 	}
 
 }//

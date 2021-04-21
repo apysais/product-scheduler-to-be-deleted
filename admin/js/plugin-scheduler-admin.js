@@ -32,7 +32,7 @@
 	$(function() {
 		$( "#misha_plugin_version" ).datepicker({
 			changeMonth: true,
-      showButtonPanel: true,
+      		showButtonPanel: true,
 			dateFormat: "mm-dd"
 		});
 	});

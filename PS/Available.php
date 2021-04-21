@@ -94,7 +94,8 @@ class PS_Available {
         $args['available_select_time'] = PS_SelectTimeRange::get_instance()->getIntervalTimeForHuman([
             'post_id' => $post_id,
             'available_time_start' => $args['available_time_start'],
-            'available_time_end' => $args['available_time_end']
+            'available_time_end' => $args['available_time_end'],
+            'start_to_current_now_time' => true
         ]);
         $args['interval_time'] = PS_SelectTimeRange::get_instance()->getIntervalTime($post_id);
         if ($timeRange) {
