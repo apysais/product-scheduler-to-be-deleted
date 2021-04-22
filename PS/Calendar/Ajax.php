@@ -2,6 +2,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
 exit; // Exit if accessed directly
 }
+use Carbon\Carbon;
 /**
 * Ajax
 * @since 0.0.1
@@ -70,6 +71,7 @@ class PS_Calendar_Ajax {
 						$date = $item->get_meta( 'ps_date_range_select', true );
 						$time_prepare = $item->get_meta( 'ps_time_select', true );
 						$time_pickup = $item->get_meta( 'ps_time_pickup_select', true );
+						//$pickup_date_time = Carbon::make($date)->format('Y-m-d').'T'.$time_pickup;
 						if ( $date != '' ) {
 							$allDay = false;
 							if( $item->get_meta( 'ps_time_pickup_select', true ) == '' ) {

@@ -72,9 +72,9 @@ class PS_WOO_SelectSchedule {
     public function psChangeOrderItemMetaTitle( $key, $meta, $item ) {
 
         // By using $meta-key we are sure we have the correct one.
-        if ( 'ps_date_range_select' === $meta->key ) { $key = 'Date Selected'; }
+        if ( 'ps_date_range_select' === $meta->key ) { $key = 'Afhentningsdato'; }
         if ( 'ps_time_select' === $meta->key ) { $key = 'Prepare Time'; }
-        if ( 'ps_time_pickup_select' === $meta->key ) { $key = 'Time Pickup Selected'; }
+        if ( 'ps_time_pickup_select' === $meta->key ) { $key = 'Afhentningstidspunkt'; }
 
         return $key;
     }
@@ -82,7 +82,7 @@ class PS_WOO_SelectSchedule {
     public function psCartItemName( $name, $cart_item, $cart_item_key ) {
         if( isset( $cart_item['ps_date_range_select'] ) ) {
             $name .= sprintf(
-            '<p>Date Selected: %s</p>',
+            '<p>Afhentningsdato: %s</p>',
             esc_html( $cart_item['ps_date_range_select'] )
             );
         }
@@ -94,7 +94,7 @@ class PS_WOO_SelectSchedule {
         }
         if( isset( $cart_item['ps_time_pickup_select'] ) ) {
             $name .= sprintf(
-            '<p>Time Pickup Selected: %s</p>',
+            '<p>Afhentningstidspunkt: %s</p>',
             esc_html( $cart_item['ps_time_pickup_select'] )
             );
         }
@@ -197,7 +197,7 @@ class PS_WOO_SelectSchedule {
             $data['available_select_day'] = PS_SelectDay::get_instance()->convertDayToNumericKey($available['available_select_day']);
 
             $isWithinTimeRange = PS_SelectTimeRange::get_instance()->isWithinTimeRange(['post_id'=>$post_id]);
-            $prepareTime = PS_SelectTimeRange::get_instance()->getIntervalPrepareTime(['post_id'=>$post_id]);
+            $prepareTime = PS_SelectTimeRange::get_instance()->getIntervalPrepareTime($post_id);
 
             $available_time_pickup = PS_SelectTimeRange::get_instance()->getIntervalTimeForHuman([
                 'post_id' => $post_id,

@@ -82,6 +82,7 @@ class PS_SelectTimeRange {
 			'post_id' => $post_id,
 			'available_time_start' => $available_time_start,
 			'available_time_end' => $available_time_end,
+			'date_selected' => $_POST['date_selected'] ?? false
 		]);
 
 		echo wp_send_json($available_select_time);
@@ -189,12 +190,13 @@ class PS_SelectTimeRange {
 		$post_id = $args['post_id'];
 		$format = $args['date_format'] ?? 'H:i';
 		$startToNowTime = $args['start_to_current_now_time'] ?? false;
+		$selectedDate = $args['date_selected'];
 
 		$now = Carbon::now(wp_timezone_string());
 		$option = new PS_Options;
 
 		$isWithinTimeRange = $this->isWithinTimeRange(['post_id'=>$post_id]);
-
+		$userSelectedDate = Carbon::make($selectedDate)->format('Ymd');
 		//prepare
 		$time_prepare_interval = $args['time_prepare_interval'] ?? null;
 		if ( !$time_prepare_interval ) {
@@ -239,7 +241,13 @@ class PS_SelectTimeRange {
 		}
 		$makePickupString = $makePickupHour.' and '.$makePickupMinute;
 		$interval_pickup_time = CarbonInterval::make($makePickupString);
-		$available_time_start = Carbon::createFromFormat('H:i', $args['available_time_start'], wp_timezone_string())->add($makePrepareString)->format('H:i');
+		
+		if ( $userSelectedDate > $now->format('Ymd') || $args['available_time_start'] > $now->format('H:i')  ) {
+		//if ( !$isWithinTimeRange ) {
+			$available_time_start = Carbon::createFromFormat('H:i', $args['available_time_start'], wp_timezone_string())->format('H:i');
+		} else {
+			$available_time_start = Carbon::createFromFormat('H:i', $args['available_time_start'], wp_timezone_string())->add($makePrepareString)->format('H:i');
+		}
 
 		$available_time_end = $args['available_time_end'];
 		$intervals = CarbonInterval::make($makePickupString)->toPeriod($available_time_start, $available_time_end);
@@ -254,6 +262,8 @@ class PS_SelectTimeRange {
 		return $arrayIntervalTime;
 	}
 	//pickup
+
+	//not use
 	public function getIntervalTimeForHuman(array $args = [])
 	{
 		$post_id = $args['post_id'];

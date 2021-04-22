@@ -48,8 +48,8 @@ class PS_WPMenu {
 	public function init()
 	{
 		add_menu_page(
-			__('Product Scheduler'),
-			'Product Scheduler',
+			__('Calendar'),
+			'Calendar',
 			'delete_posts',
 			'product-scheduler',
 			[PS_Calendar_Controller::get_instance() , 'controller'],

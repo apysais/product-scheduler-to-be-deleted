@@ -1,9 +1,9 @@
 <div class="ps-select-date-time-schedule">
-    <p>Select Date to pickup
+    <p>Afhentningsdato
         <input readonly="readonly" type="text" class="ps-select-date-range" name="ps-select-date-range" id="ps-select-date-range" style="width:100%;" autocomplete="off">
     </p>
     <?php //if ( $isWithinTimeRange ) : ?>
-        <p>Select time to Pickup <br>
+        <p>Afhentningstidspunkt <br>
             <select name="ps-select-time-range-pickup" class="ps-select-time-range-pickup">
                 <?php foreach($available_select_time_pickup as $key => $val ) : ?>
                     <option value="<?php echo $key;?>"><?php echo $val;?></option>
