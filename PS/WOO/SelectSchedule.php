@@ -73,7 +73,7 @@ class PS_WOO_SelectSchedule {
 
         // By using $meta-key we are sure we have the correct one.
         if ( 'ps_date_range_select' === $meta->key ) { $key = 'Date Selected'; }
-        if ( 'ps_time_select' === $meta->key ) { $key = 'Time Prepare Selected'; }
+        if ( 'ps_time_select' === $meta->key ) { $key = 'Prepare Time'; }
         if ( 'ps_time_pickup_select' === $meta->key ) { $key = 'Time Pickup Selected'; }
 
         return $key;
@@ -88,7 +88,7 @@ class PS_WOO_SelectSchedule {
         }
         if( isset( $cart_item['ps_time_select'] ) ) {
             $name .= sprintf(
-            '<p>Time Prepare Selected: %s</p>',
+            '<p>Prepare Time: %s</p>',
             esc_html( $cart_item['ps_time_select'] )
             );
         }
@@ -110,9 +110,9 @@ class PS_WOO_SelectSchedule {
             // Add the item data
             $cart_item_data['ps_date_range_select'] = $_POST['ps-select-date-range'];
         }
-        if( $isScheduleEnable && ! empty( $_POST['ps-select-time-range'] ) ) {
+        if( $isScheduleEnable && ! empty( $_POST['ps_time_select'] ) ) {
             // Add the item data, prepare
-            $cart_item_data['ps_time_select'] = $_POST['ps-select-time-range'];
+            $cart_item_data['ps_time_select'] = $_POST['ps_time_select'];
         }
         if( $isScheduleEnable && ! empty( $_POST['ps-select-time-range-pickup'] ) ) {
             // Add the item data, pickup
@@ -146,12 +146,12 @@ class PS_WOO_SelectSchedule {
         if( $isScheduleEnable && empty( $_POST['ps-select-date-range'] ) ) {
             // Fails validation
             $passed = false;
-            wc_add_notice( __( 'Please select a date into the date schedule field', 'woocommerce' ), 'error' );
+            wc_add_notice( __( 'Please select a date into the date schedule', 'woocommerce' ), 'error' );
         }
-        if( $isScheduleEnable && empty( $_POST['ps-select-time-range'] ) ) {
+        if( $isScheduleEnable && empty( $_POST['ps-select-time-range-pickup'] ) ) {
             // Fails validation
             $passed = false;
-            wc_add_notice( __( 'Please select a time schedule field', 'woocommerce' ), 'error' );
+            wc_add_notice( __( 'Please select a time pickup', 'woocommerce' ), 'error' );
         }
         return $passed;
     }
@@ -197,13 +197,7 @@ class PS_WOO_SelectSchedule {
             $data['available_select_day'] = PS_SelectDay::get_instance()->convertDayToNumericKey($available['available_select_day']);
 
             $isWithinTimeRange = PS_SelectTimeRange::get_instance()->isWithinTimeRange(['post_id'=>$post_id]);
-
-            $available_select_time = PS_SelectTimeRange::get_instance()->getIntervalPrepareTimeForHuman([
-                'post_id' => $post_id,
-                'available_time_start' => $available['available_time_start'],
-                'available_time_end' => $available['available_time_end'],
-                'start_to_current_now_time' => true
-            ]);
+            $prepareTime = PS_SelectTimeRange::get_instance()->getIntervalPrepareTime(['post_id'=>$post_id]);
 
             $available_time_pickup = PS_SelectTimeRange::get_instance()->getIntervalTimeForHuman([
                 'post_id' => $post_id,
@@ -216,7 +210,7 @@ class PS_WOO_SelectSchedule {
             $data['isScheduleEnable'] = $isScheduleEnable;
             $data['isWithinTimeRange'] = $isWithinTimeRange;
             $data['isWithinDateRange'] = $isWithinDateRange;
-            $data['available_select_time'] = $available_select_time;
+            $data['prepare_time'] = $prepareTime;
             $data['available_select_time_pickup'] = $available_time_pickup;
             $data['available_select_date_day'] = PS_SelectDay::get_instance()->convertDayToJqueryDatePicker($available['available_day']);
             $data['post_id'] = $post_id;
